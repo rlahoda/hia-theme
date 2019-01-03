@@ -1,0 +1,51 @@
+{#
+/**
+ * @file
+ * Theme override to present all user data.
+ *
+ * This template is used when viewing a registered user's page,
+ * e.g., example.com/user/123. 123 being the user's ID.
+ *
+ * Available variables:
+ * - content: A list of content items. Use 'content' to print all content, or
+ *   print a subset such as 'content.field_example'. Fields attached to a user
+ *   such as 'user_picture' are available as 'content.user_picture'.
+ * - attributes: HTML attributes for the container element.
+ * - user: A Drupal User entity.
+ *
+ * @see template_preprocess_user()
+ */
+#}
+{%
+  set classes = [
+    'uk-margin-large-left',
+    'uk-margin-large-right',
+  ]
+%}
+
+<article{{ attributes.addClass(classes) }}>
+  {% if content %}
+    <div class="uk-container uk-grid-small" uk-grid>
+      <div class="uk-width-1-3@s uk-width-1-4@m">{{ content.user_picture}}</div>
+      <div class="uk-width-expand">
+        <h2 class="uk-margin-remove-bottom">{{ content.field_display_name }}</h2>
+        <h3 class="uk-margin-remove">{{ content.field_title }} </h3>
+        {#{{ content.field_insurance_types }}#}
+        <p class="uk-margin-small-top">{{ content.field_biography }}</p>
+        {{- content|without('user_picture', 'field_display_name', 'field_insurance_types', 'field_cellphone', 'field_o', 'field_e', 'field_title', 'field_biography') -}}
+        <div class="uk-margin-small-top"> 
+          {% if content.field_cellphone['#items'] is not empty %}
+          <span class="" uk-icon="icon: phone"></span> {{ content.field_cellphone }}
+          {% endif %}
+          {% if content.field_o['#items'] is not empty %}
+          <span class="uk-margin-left" uk-icon="icon: receiver"></span> {{ content.field_o }}
+          {% endif %}
+          {% if content.field_e['#items'] is not empty %}
+          <span class="uk-margin-left" uk-icon="icon: mail"></span> {{ content.field_e }}
+          {% endif %}
+        </div>
+
+      </div>
+    </div>
+  {% endif %}
+</article>

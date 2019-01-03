@@ -1,0 +1,163 @@
+{#
+/**
+ * @file
+ * Theme override to display a node.
+ *
+ * Available variables:
+ * - node: The node entity with limited access to object properties and methods.
+ *   Only method names starting with "get", "has", or "is" and a few common
+ *   methods such as "id", "label", and "bundle" are available. For example:
+ *   - node.getCreatedTime() will return the node creation timestamp.
+ *   - node.hasField('field_example') returns TRUE if the node bundle includes
+ *     field_example. (This does not indicate the presence of a value in this
+ *     field.)
+ *   - node.isPublished() will return whether the node is published or not.
+ *   Calling other methods, such as node.delete(), will result in an exception.
+ *   See \Drupal\node\Entity\Node for a full list of public properties and
+ *   methods for the node object.
+ * - label: The title of the node.
+ * - content: All node items. Use {{ content }} to print them all,
+ *   or print a subset such as {{ content.field_example }}. Use
+ *   {{ content|without('field_example') }} to temporarily suppress the printing
+ *   of a given child element.
+ * - author_picture: The node author user entity, rendered using the "compact"
+ *   view mode.
+ * - metadata: Metadata for this node.
+ * - date: Themed creation date field.
+ * - author_name: Themed author name field.
+ * - url: Direct URL of the current node.
+ * - display_submitted: Whether submission information should be displayed.
+ * - attributes: HTML attributes for the containing element.
+ *   The attributes.class element may contain one or more of the following
+ *   classes:
+ *   - node: The current template type (also known as a "theming hook").
+ *   - node--type-[type]: The current node type. For example, if the node is an
+ *     "Article" it would result in "node--type-article". Note that the machine
+ *     name will often be in a short form of the human readable label.
+ *   - node--view-mode-[view_mode]: The View Mode of the node; for example, a
+ *     teaser would result in: "node--view-mode-teaser", and
+ *     full: "node--view-mode-full".
+ *   The following are controlled through the node publishing options.
+ *   - node--promoted: Appears on nodes promoted to the front page.
+ *   - node--sticky: Appears on nodes ordered above other non-sticky nodes in
+ *     teaser listings.
+ *   - node--unpublished: Appears on unpublished nodes visible only to site
+ *     admins.
+ * - title_attributes: Same as attributes, except applied to the main title
+ *   tag that appears in the template.
+ * - content_attributes: Same as attributes, except applied to the main
+ *   content tag that appears in the template.
+ * - author_attributes: Same as attributes, except applied to the author of
+ *   the node tag that appears in the template.
+ * - title_prefix: Additional output populated by modules, intended to be
+ *   displayed in front of the main title tag that appears in the template.
+ * - title_suffix: Additional output populated by modules, intended to be
+ *   displayed after the main title tag that appears in the template.
+ * - view_mode: View mode; for example, "teaser" or "full".
+ * - teaser: Flag for the teaser state. Will be true if view_mode is 'teaser'.
+ * - page: Flag for the full page state. Will be true if view_mode is 'full'.
+ * - readmore: Flag for more state. Will be true if the teaser content of the
+ *   node cannot hold the main body content.
+ * - logged_in: Flag for authenticated user status. Will be true when the
+ *   current user is a logged-in member.
+ * - is_admin: Flag for admin user status. Will be true when the current user
+ *   is an administrator.
+ *
+ * @see template_preprocess_node()
+ *
+ * @todo Remove the id attribute (or make it a class), because if that gets
+ *   rendered twice on a page this is invalid CSS for example: two lists
+ *   in different view modes.
+ */
+#}
+
+{% if node.field_height.target_id == 9 %}
+  {% set imageheight = 'uk-height-small' %}
+{% elseif node.field_height.target_id == 8 %}
+  {% set imageheight = 'uk-height-medium' %}
+{% else %}
+  {% set imageheight = 'uk-height-large' %}
+{% endif %}
+
+{% if  node.field_image_alignment.target_id == 10  %}
+  {% set imagealign = 'uk-background-top-left' %}
+{% elseif  node.field_image_alignment.target_id == 11 %}
+  {% set imagealign = 'uk-background-top-center' %}
+{% elseif  node.field_image_alignment.target_id == 12 %}
+  {% set imagealign = 'uk-background-top-right' %}
+{% elseif  node.field_image_alignment.target_id == 14 %}
+  {% set imagealign = 'uk-background-center-left' %}
+{% elseif  node.field_image_alignment.target_id == 15 %}
+  {% set imagealign = 'uk-background-center-right' %}
+{% elseif node.field_image_alignment.target_id == 17 %}
+  {% set imagealign = 'uk-background-bottom-left' %}
+{% elseif node.field_image_alignment.target_id == 16 %}
+  {% set imagealign = 'uk-background-bottom-center' %}
+{% elseif  node.field_image_alignment.target_id == 18 %}
+  {% set imagealign = 'uk-background-bottom-right' %}
+{% else %}
+  {% set imagealign = 'uk-background-center-center' %}
+{% endif %}
+
+{% if node.field_button_style.target_id == 23 %}
+  {% set buttonStyle = 'uk-button-primary' %}
+{% elseif node.field_button_style.target_id == 24 %}
+  {% set buttonStyle = 'uk-button-secondary' %}
+{% else %}
+  {% set buttonStyle = 'uk-button-default' %}
+{% endif %}
+
+{% if node.field_text_color_scheme.target_id == 5 %}
+  {% set textColorScheme = 'uk-light' %}
+{% elseif node.field_text_color_scheme.target_id == 4 %}
+  {% set textColorScheme = 'uk-dark' %}
+{% else %}
+  {% set textColorScheme = '' %}
+{% endif %}
+
+{%
+  set classes = [
+    'uk-inline',
+    imagealign,
+    imageheight,
+    'uk-width-1-1',
+    'uk-background-cover',
+  ]
+%}
+
+<article{{ attributes.addClass('uk-article') }}>
+{{ content.breadcrumb }}
+    <div class="uk-container">
+      <h1 class="uk-text-center uk-margin-bottom">{{ label }}</h1>
+</div>
+{% if content.field_header_image['#items'] is not empty %}
+  <div{{ attributes.addClass(classes) }} style="background-image: url({{ file_url(node.field_header_image.entity.fileuri) }})">
+{#{{ content.field_header_image }}#}
+{% if content.field_button_quote_destination['#items'] is not empty %}
+  <div style="background-color: rgba(255,255,255,.8); width: 100%;"class="uk-overlay uk-position-center">
+    <h3 style="text-align: center;" class="uk-align-center uk-width-4-5@s uk-width-1-2@m uk-margin-remove-bottom uk-margin-remove-top {{ textColorScheme }}">{{ content.field_header_image_text}}</h3>
+    <p style="text-align: center;">
+     <a class="uk-button {{ buttonStyle }}" href="{{ content.field_button_quote_destination[0]['#url'] }}">{{ content.field_button_text }}</a>
+   </p>
+  </div>
+  {% endif %}
+</div>
+{% endif %}
+{% if content.body['#items'] is not empty %}
+<div class="uk-section">
+    {#<div class="uk-container">
+      <h1 class="uk-text-center uk-margin-bottom">{{ label }}</h1>
+</div> #}
+    <div class="uk-container">
+      {{ content.body }}
+    </div>
+</div>
+{% endif %}
+  <div{{ content_attributes }}>
+    {{ content|without('field_button_text', 'field_header_image', 'field_header_image_text', 'field_color_scheme', 'field_style', 'body', 'field_image_alignment', 'field_height', 'field_insurance_types', 'breadcrumb', 'field_button_quote_destination', 'field_social_media_image', 'field_social_media_summary') }}
+  </div>
+  <div hidden>
+    {{ content.field_social_media_image }}
+    {{ content.field_social_media_summary }}
+  </div>
+</article>

@@ -1,0 +1,20 @@
+name: 'hia_oh'
+type: theme
+description: 'Theme designed for Heritage Insurance Advisors based on UIkit v3'
+core: 8.x
+base theme: uikit
+
+regions:
+  logo: 'Logo'
+  navbar: 'Primary Navigation'
+  offcanvas: 'Offcanvas Navigation'
+  nav3: 'Mobile Nav'
+  alert: 'Alert'
+  breadcrumb: 'Breadcrumb'
+  content: 'Content'
+  footerleft: 'Footer Left'
+  footercenter: 'Footer Center'
+  footerright: 'Footer Right'
+
+libraries:
+  - hia_oh/global-styling

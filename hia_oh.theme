@@ -1,0 +1,148 @@
+<?php
+
+
+function hia_oh_preprocess_node(&$variables) {
+ // dpm($variables['elements']['#view_mode']);
+  if ($variables['elements']['#view_mode']=='full') {
+  // dpm($variables['elements']['#view_mode']);
+    // here $variables is an object which is like an array but more complex and so the brackets [] are diving into the array
+    // the first is going into the elements value then the second is looking for the #node value inside of elements.
+    // then inside the #node array it looks for the bundle value and checks to see if it's equal to the string article
+    $block_manager = \Drupal::service('plugin.manager.block');
+    // You can hard code configuration or you load from settings.
+    $config = [];
+    $plugin_block = $block_manager->createInstance('system_breadcrumb_block', $config);
+    // dpm($plugin_block);
+    $render = $plugin_block->build();
+    // In some cases, you need to add the cache tags/context depending on
+    // the block implemention. As it's possible to add the cache tags and
+    // contexts in the render method and in ::getCacheTags and
+    // ::getCacheContexts methods.
+    $variables['content']['breadcrumb']=$render;
+    // dpm($variables);
+  }
+}
+
+
+function hia_oh_theme_suggestions_alter( &$suggestions, $variables, $hook) {
+
+  if ($hook=="user") {
+    $suggestions[] = $hook . '__' . $variables['elements']['#view_mode'];
+    // dpm($suggestions);
+    // dpm($variables);
+  }
+
+  if ($hook=="image") {
+    $suggestions[] = $hook . '__' . $variables['style_name'];
+    // dpm($suggestions);
+    // dpm($variables['style_name']);
+  }
+
+  if ($hook=="views_view_unformatted__block") {
+    // dpm($variables['view']->getDisplay());
+    // $display = $variables['view']->getDisplay()->getPluginId();
+  $suggestions[] = $hook . '__' . $variables['view']->id();
+  // $suggestions[] = $hook . '__' . $display;
+  // $suggestions[] = $hook . '__' . $display . '__' . $variables['view']->id();
+  // dpm($suggestions);
+  // dpm($variables);
+}
+
+if ($hook=="views_view_unformatted") {
+    // dpm($variables['view']->getDisplay());
+    $display = $variables['view']->getDisplay()->getPluginId();
+  $suggestions[] = $hook . '__' . $variables['view']->id();
+  $suggestions[] = $hook . '__' . $display;
+  $suggestions[] = $hook . '__' . $display . '__' . $variables['view']->id();
+  // dpm($suggestions);
+  // dpm($variables);
+  }
+
+}
+
+function hia_oh_theme_suggestions_views_view_alter(array &$suggestions, array $variables) {
+
+  $display = $variables['view']->getDisplay()->getPluginId();
+  $view = $variables['view']->id();
+  $suggestions[] = "views_view__$view";
+  $suggestions[] = "views_view__$display";
+  $suggestions[] = "views_view__$view" . "__$display";
+
+}
+
+function hia_oh_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+  // Block suggestions for custom block bundles.
+  //thanks to https://www.drupal.org/forum/support/theme-development/2016-05-12/theming-custom-block-types
+  if (isset($variables['elements']['content']['#block_content'])) {
+    array_splice($suggestions, 1, 0, 'block__bundle__' . $variables['elements']['content']['#block_content']->bundle());
+  }
+}
+
+/**
+ * Implements hook_preprocess_block().
+ */
+function hia_oh_preprocess_block(&$variables) {
+  $variables['content']['#attributes']['block'] = $variables['attributes']['id'];
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function hia_oh_theme_suggestions_menu_alter(array &$suggestions, array $variables) {
+  // Remove the block and replace dashes with underscores in the block ID to
+  // use for the hook name.
+  if (isset($variables['attributes']['block'])) {
+    $hook = str_replace(array('block-', '-'), array('', '_'), $variables['attributes']['block']);
+    $suggestions[] = $variables['theme_hook_original'] . '__' . $hook;
+  }
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function hia_oh_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  // dpm($form_state->getValue('what_kind_of_insurance_are_you_looking_for_'));
+  // dpm($form_state);
+if ($form_id == 'webform_submission_get_a_quote_add_form') {
+  # code...
+  // dpm('yes1');
+
+
+  $checkbox = $form_state->getValue('what_kind_of_insurance_are_you_looking_for_');
+if (is_array($checkbox)) {
+  # code...
+
+  if (in_array("Auto",$checkbox)) {
+    $form['#attributes']['class'][]='webform_insurance_selector_auto';
+
+  }
+  if (in_array("Home or Rental",$checkbox)) {
+    $form['#attributes']['class'][]='webform_insurance_selector_home';
+  }
+  if (in_array("cyber",$checkbox)) {
+    $form['#attributes']['class'][]='webform_insurance_selector_cyber';
+  }
+}
+}
+
+if ($form_id == 'webform_submission_get_a_quote_node_14_add_form') {
+  # code...
+
+// dpm('yes');
+  $checkbox = $form_state->getValue('what_kind_of_insurance_are_you_looking_for_');
+if (is_array($checkbox)) {
+  # code...
+
+  if (in_array("Auto",$checkbox)) {
+    $form['#attributes']['class'][]='webform_insurance_selector_auto';
+
+  }
+  if (in_array("Home or Rental",$checkbox)) {
+    $form['#attributes']['class'][]='webform_insurance_selector_home';
+  }
+  if (in_array("cyber",$checkbox)) {
+    $form['#attributes']['class'][]='webform_insurance_selector_cyber';
+  }
+}
+}
+}
